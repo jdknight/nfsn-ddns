@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # SPDX-License-Identifier: BSD-2-Clause
 # Copyright nfsn-ddns Contributors
 
