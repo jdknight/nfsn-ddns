@@ -1,0 +1,49 @@
+[build-system]
+requires = [
+    'flit_core>=3.7',
+]
+build-backend = 'flit_core.buildapi'
+
+[project]
+name = 'nfsn-ddns'
+description = 'NearlyFreeSpeech.net Dynamic DNS Utility'
+requires-python = '>=3.8'
+readme = 'README.md'
+classifiers = [
+    'Development Status :: 4 - Beta',
+    'Environment :: Console',
+    'License :: OSI Approved :: BSD License',
+    'Operating System :: OS Independent',
+    'Programming Language :: Python',
+    'Programming Language :: Python :: 3 :: Only',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3.10',
+    'Programming Language :: Python :: 3.11',
+    'Programming Language :: Python :: 3.12',
+    'Topic :: Internet :: Name Service (DNS)',
+    'Topic :: Utilities',
+]
+dependencies = [
+    'requests>=2.30.0',
+    'pyyaml',
+]
+dynamic = [
+    'version',
+]
+
+[project.urls]
+Download = 'https://pypi.python.org/pypi/nfsn-ddns'
+Source = 'https://github.com/jdknight/nfsn-ddns'
+
+[project.scripts]
+nfsn-ddns = 'nfsn_ddns.__main__:main'
+
+[tool.flit.module]
+name = 'nfsn_ddns'
+
+[tool.flit.sdist]
+include = [
+    'LICENSE',
+]

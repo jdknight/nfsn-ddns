@@ -1,0 +1,17 @@
+# SPDX-License-Identifier: BSD-2-Clause
+# Copyright nfsn-ddns Contributors
+
+name: nfsn-ddns
+services:
+  ddns:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    env_file:
+      # allow loading from a common environment file
+      - path: ./.env
+        required: false
+      # allow loading from a nfsn-ddns-specific environment file
+      - path: ./.nfsn-ddns.env
+        required: false
+    restart: unless-stopped

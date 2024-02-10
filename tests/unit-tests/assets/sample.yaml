@@ -1,0 +1,14 @@
+nfsn-ddns:
+  api-login: my-api-login
+  api-token: my-api-token
+  cache: true
+  cache-days: 2
+  cache-file: my-cache-file
+  domain: my-domain
+  record: my-record
+  nfsn-api-endpoint: my-nfsn-api-endpoint
+  myip-api-endpoints:
+    - my-myip-api-endpoint-1
+    - my-myip-api-endpoint-2
+    - my-myip-api-endpoint-3
+  timeout: 10

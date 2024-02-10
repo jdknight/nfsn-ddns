@@ -1,0 +1,25 @@
+# building
+/*.egg-info/
+/.eggs/
+/build/
+/dist/
+/pip-wheel-metadata/
+
+# python-specific
+__pycache__/
+*.py[cod]
+*$py.class
+
+# testing
+/htmlcov*/
+/.tox/
+.coverage*
+!.coveragerc
+
+# configuration file
+.env
+.nfsn-ddns.env
+config.yaml
+
+# cache file
+nfsn-ddns-cached-ip

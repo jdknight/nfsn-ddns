@@ -1,0 +1,27 @@
+lint.select = [
+    'ALL',
+]
+
+lint.ignore = [
+    # deprecated rule
+    'ANN101',
+    # we are a bit complex for now
+    'C90',
+    # ignore pydocstyle
+    'D',
+    # imports are sorted lexicographically in this project
+    'I001',
+    # ignore "too many" warnings
+    'PLR',
+    # project uses unittest module
+    'PT',
+    # single quotes are preferred in this project
+    'Q000',
+    'Q001',
+    # use of asserts are acceptable for this tool
+    'S101',
+    # ignore flake8-print since we support/expect printing
+    'T20',
+    # still supporting pre-python v3.10
+    'UP007',
+]

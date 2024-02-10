@@ -1,0 +1,7 @@
+# Example nfsn-ddns configuration file
+nfsn-ddns:
+  api-login: <login>
+  api-token: <token>
+  domain: <domain>
+  record: <record>
+  timeout: 10
