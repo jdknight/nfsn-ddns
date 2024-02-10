@@ -1,8 +1,8 @@
 [build-system]
 requires = [
-    'flit_core>=3.7',
+    'hatchling',
 ]
-build-backend = 'flit_core.buildapi'
+build-backend = 'hatchling.build'
 
 [project]
 name = 'nfsn-ddns'
@@ -43,7 +43,18 @@ nfsn-ddns = 'nfsn_ddns.__main__:main'
 [tool.flit.module]
 name = 'nfsn_ddns'
 
-[tool.flit.sdist]
+[tool.hatch.build.targets.sdist]
 include = [
-    'LICENSE',
+    'nfsn_ddns',
+    'nfsn-ddns',
+    'tests',
 ]
+
+[tool.hatch.build.targets.wheel]
+packages = [
+    'nfsn_ddns',
+    'nfsn-ddns',
+]
+
+[tool.hatch.version]
+path = 'nfsn_ddns/__init__.py'
