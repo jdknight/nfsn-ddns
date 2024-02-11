@@ -239,7 +239,7 @@ configuration desired.
 The container than can be run using the following command:
 
 ```
-docker run --env-file /etc/nfsn-ddns ghcr.io/jdknight/nfsn-ddns
+docker run --name nfsn-ddns --detach --env-file /etc/nfsn-ddns ghcr.io/jdknight/nfsn-ddns
 ```
 
 ### Self-built image
