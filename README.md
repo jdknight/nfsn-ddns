@@ -272,16 +272,13 @@ docker compose up --detach
 ```
 
 Both Docker build calls will by default load a container with the
-PyPI versin of nfsn-ddns. Users wanting to use the local implemetnation
-in their container can do so by first building a release, followed by
-performing a Docker build with a `--build-arg local` argument.
+PyPI version of nfsn-ddns. Users wanting to use the local implementation
+in their container can do so by performing a Docker build with the
+`--build-arg local` argument.
 
 For example:
 
 ```
-cd nfsn-ddns
-python -m build
-cd docker
 docker compose build --build-arg BUILD_MODE=local
 docker compose up --detach
 ```

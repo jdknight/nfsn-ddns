@@ -1,0 +1,16 @@
+# ignore everything
+*
+
+# explicit list to move into context
+!docker/
+!nfsn_ddns/
+!nfsn_ddns/
+!LICENSE
+!pyproject.toml
+!README.md
+
+# re-apply ignores on specific files
+**/__pycache__
+**/.env
+**/.nfsn-ddns.env
+**/config.yaml
