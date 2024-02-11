@@ -40,8 +40,8 @@ RUN ls -al /
 RUN pip install /*.whl && rm /*.whl && nfsn-ddns --version
 
 # configure entrypoint and default command
-ADD docker/docker-cmd.sh /run/docker-cmd.sh
-ADD docker/docker-entrypoint.sh /run/docker-entrypoint.sh
+COPY --chmod=744 docker/docker-cmd.sh /run/docker-cmd.sh
+COPY --chmod=744 docker/docker-entrypoint.sh /run/docker-entrypoint.sh
 
 ENTRYPOINT [ "/run/docker-entrypoint.sh" ]
 CMD [ "/run/docker-cmd.sh" ]
