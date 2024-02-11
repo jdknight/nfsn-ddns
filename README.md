@@ -3,6 +3,7 @@
 [![pip Version](https://badgen.net/pypi/v/nfsn-ddns?label=PyPI)](https://pypi.python.org/pypi/nfsn-ddns)
 [![Supported Python versions](https://badgen.net/pypi/python/nfsn-ddns?label=Python)](https://pypi.python.org/pypi/nfsn-ddns)
 [![Build Status](https://github.com/jdknight/nfsn-ddns/actions/workflows/build.yml/badge.svg)](https://github.com/jdknight/nfsn-ddns/actions/workflows/build.yml)
+[![Docker Status](https://github.com/jdknight/nfsn-ddns/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/jdknight/nfsn-ddns/actions/workflows/docker-publish.yml)
 
 ## Overview
 
