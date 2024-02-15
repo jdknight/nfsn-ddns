@@ -175,7 +175,7 @@ The endpoint used is chosen at random each run. If a given endpoint cannot
 be accessed, other endpoints are used until an IP address is provided or
 all endpoints have been exhausted.
 
-The default endpoints used as are follows:
+The default endpoints used are as follows:
 
 - https://api.ipify.org
 - https://checkip.amazonaws.com/
