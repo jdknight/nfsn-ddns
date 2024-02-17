@@ -176,7 +176,7 @@ def engine(args: Namespace) -> int:
         resource, _, tld = ddns_entry.rpartition('.')
         ddns_record, _, domain = resource.rpartition('.')
         ddns_domain = f'{domain}.{tld}'
-        verbose(f'processing ddns entry...')
+        verbose('processing ddns entry...')
         verbose(f'ddns-domain: {ddns_domain}')
         verbose(f'ddns-record: {ddns_record}')
 
