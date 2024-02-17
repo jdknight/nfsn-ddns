@@ -90,10 +90,7 @@ class Config:
             self.config['cache-file'] = args.cache_file
 
         if args.ddns_domain:
-            self.config['domain'] = args.ddns_domain
-
-        if args.ddns_record:
-            self.config['record'] = args.ddns_record
+            self.config['domains'] = args.ddns_domain
 
         if args.no_cache:
             self.config['cache'] = 'false'
@@ -167,23 +164,23 @@ class Config:
         except TypeError:
             return None
 
-    def ddns_domain(self) -> Optional[str]:
+    def ddns_domains(self) -> Optional[list[str]]:
         """
-        returns the configured ddns domain value
+        returns the configured ddns domains value
 
         Returns:
-            the domain value
+            the domains value
         """
-        return self._fetch('domain')
+        raw_domains = self._fetch('domains')
 
-    def ddns_record(self) -> Optional[str]:
-        """
-        returns the configured ddns record value
+        if isinstance(raw_domains, list):
+            domains = raw_domains
+        elif isinstance(raw_domains, str):
+            domains = raw_domains.split(';')
+        else:
+            domains = None
 
-        Returns:
-            the record value
-        """
-        return self._fetch('record')
+        return domains
 
     def nfsn_api_endpoint(self) -> Optional[str]:
         """
@@ -252,12 +249,8 @@ class Config:
             err('(config) missing api token value')
             rv = False
 
-        if not self.ddns_domain():
-            err('(config) missing ddns domain value')
-            rv = False
-
-        if not self.ddns_record():
-            err('(config) missing ddns record value')
+        if not self.ddns_domains():
+            err('(config) missing ddns domains value')
             rv = False
 
         return rv

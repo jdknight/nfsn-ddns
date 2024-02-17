@@ -4,8 +4,9 @@ nfsn-ddns:
   cache: true
   cache-days: 2
   cache-file: my-cache-file
-  domain: my-domain
-  record: my-record
+  domains:
+    - my-record1.my-domain1
+    - my-record2.my-domain2
   nfsn-api-endpoint: my-nfsn-api-endpoint
   myip-api-endpoints:
     - my-myip-api-endpoint-1

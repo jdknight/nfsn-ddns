@@ -37,8 +37,7 @@ def main() -> int:
         parser.add_argument('--cache-days', type=int)
         parser.add_argument('--cache-file', type=Path)
         parser.add_argument('--cfg', type=Path)
-        parser.add_argument('--ddns-domain')
-        parser.add_argument('--ddns-record')
+        parser.add_argument('--ddns-domain', action='append', nargs='+')
         parser.add_argument('--help', '-h', action='store_true')
         parser.add_argument('--no-cache', action='store_true')
         parser.add_argument('--nocolorout', action='store_true')
@@ -113,7 +112,6 @@ def usage() -> str:
  --cache-file <file>       Cache file when caching public IP
  --cfg <file>              Configuration file to load
  --ddns-domain <domain>    The domain to be updated
- --ddns-record <record>    The DNS record to update
  -h, --help                Show this help
  --no-cache                Explicitly disable any cache attempts
  --nocolorout              Explicitly disable colorized output

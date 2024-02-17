@@ -53,8 +53,8 @@ as follows:
 nfsn-ddns:
   api-login: <api-login>
   api-token: <api-token>
-  domain: <domain>
-  record: <record>
+  domains:
+    - <domain>
   timeout: 10
 ```
 
@@ -64,7 +64,7 @@ as the API token) can be configured from an environment variable:
 
 ```
 export NFSN_DDNS_API_TOKEN=myapitoken
-nfsn-ddns --api-login myaccount --ddns-domain example.com --ddns-record ddns
+nfsn-ddns --api-login myaccount --ddns-domain ddns.example.com
 ```
 
 All available configuration options are listed as follows:
@@ -92,22 +92,22 @@ page, users can request to generate an API token.
 - Environment variable: `NFSN_DDNS_API_TOKEN`
 
 </td></tr>
-<tr><td>DDNS Domain</td><td>
+<tr><td>DDNS Domains</td><td>
 
-The domain which contains the DNS record to be updated.
+The DNS resource to update, which includes the DNS record which to update
+with a dynamically detected IP address, along with its domain. For example:
+
+```
+ddns.example.com
+```
+
+Multiple domains can be provided, for users who want a DDNS record across
+multiple domains (although the use of CNAME's are recommended when attempting
+to updated multiple records for a single domain).
 
 - Command line option: `--ddns-domain`
-- Configuration key: `domain` *(str)*
-- Environment variable: `NFSN_DDNS_DOMAIN`
-
-</td></tr>
-<tr><td>DDNS Record</td><td>
-
-The DNS record which to update with a dynamically detected IP address.
-
-- Command line option: `--ddns-record`
-- Configuration key: `record` *(str)*
-- Environment variable: `NFSN_DDNS_RECORD`
+- Configuration key: `domains` *(str-list)*
+- Environment variable: `NFSN_DDNS_DOMAINS` *(;-separated)*
 
 </td></tr>
 <tr><th colspan="2">Additional Options</th></tr>

@@ -41,8 +41,7 @@ class TestConfiguration(NfsnDdnsTestCase):
         self.assertIsNone(self.cfg.cache())
         self.assertIsNone(self.cfg.cache_days())
         self.assertIsNone(self.cfg.cache_file())
-        self.assertIsNone(self.cfg.ddns_domain())
-        self.assertIsNone(self.cfg.ddns_record())
+        self.assertIsNone(self.cfg.ddns_domains())
         self.assertIsNone(self.cfg.nfsn_api_endpoint())
         self.assertIsNone(self.cfg.myip_api_endpoints())
         self.assertIsNone(self.cfg.timeout())
@@ -79,15 +78,12 @@ class TestConfiguration(NfsnDdnsTestCase):
 
     def test_config_args_ddns_domain(self) -> None:
         args = MockedArgs()
-        args.ddns_domain = 'tellow-titanium-labrador'
+        args.ddns_domain = [
+            'tellow-titanium-labrador',
+            'purple-zinc-labrador',
+        ]
         self.cfg.accept(args)
-        self.assertEqual(self.cfg.ddns_domain(), args.ddns_domain)
-
-    def test_config_args_ddns_record(self) -> None:
-        args = MockedArgs()
-        args.ddns_record = 'purple-zinc-labrador'
-        self.cfg.accept(args)
-        self.assertEqual(self.cfg.ddns_record(), args.ddns_record)
+        self.assertEqual(self.cfg.ddns_domains(), args.ddns_domain)
 
     def test_config_args_timeout(self) -> None:
         args = MockedArgs()
@@ -120,15 +116,14 @@ class TestConfiguration(NfsnDdnsTestCase):
         os.environ['NFSN_DDNS_CACHE_FILE'] = str(expected)
         self.assertEqual(self.cfg.cache_file(), expected)
 
-    def test_config_env_ddns_domain(self) -> None:
-        expected = 'lime-nickel-boxer'
-        os.environ['NFSN_DDNS_DOMAIN'] = expected
-        self.assertEqual(self.cfg.ddns_domain(), expected)
-
-    def test_config_env_ddns_record(self) -> None:
-        expected = 'white-silver-chihuahua'
-        os.environ['NFSN_DDNS_RECORD'] = expected
-        self.assertEqual(self.cfg.ddns_record(), expected)
+    def test_config_env_ddns_domains(self) -> None:
+        value = 'lime-nickel-boxer;white-silver-chihuahua'
+        expected = [
+            'lime-nickel-boxer',
+            'white-silver-chihuahua',
+        ]
+        os.environ['NFSN_DDNS_DOMAINS'] = value
+        self.assertEqual(self.cfg.ddns_domains(), expected)
 
     def test_config_env_nfsn_api_endpoint(self) -> None:
         expected = 'fuschia-aluminium-chow-chow'
@@ -166,8 +161,10 @@ class TestConfiguration(NfsnDdnsTestCase):
         self.assertEqual(self.cfg.cache(), True)
         self.assertEqual(self.cfg.cache_days(), 2)
         self.assertEqual(self.cfg.cache_file(), Path('my-cache-file'))
-        self.assertEqual(self.cfg.ddns_domain(), 'my-domain')
-        self.assertEqual(self.cfg.ddns_record(), 'my-record')
+        self.assertEqual(self.cfg.ddns_domains(), [
+            'my-record1.my-domain1',
+            'my-record2.my-domain2',
+        ])
         self.assertEqual(self.cfg.nfsn_api_endpoint(), 'my-nfsn-api-endpoint')
         self.assertListEqual(self.cfg.myip_api_endpoints(), [
             'my-myip-api-endpoint-1',

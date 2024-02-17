@@ -76,15 +76,13 @@ def engine(args: Namespace) -> int:
     allow_caching = cfg.cache()
     cache_days = cfg.cache_days()
     cache_file = cfg.cache_file()
-    ddns_domain = cfg.ddns_domain()
-    ddns_record = cfg.ddns_record()
+    ddns_domains = cfg.ddns_domains()
     timeout = cfg.timeout()
 
     # verified via cfg.validate()
     assert isinstance(api_login, str)
     assert isinstance(api_token, str)
-    assert isinstance(ddns_domain, str)
-    assert isinstance(ddns_record, str)
+    assert isinstance(ddns_domains, list)
 
     if sys.platform != 'win32':
         uid = os.getuid()
@@ -118,8 +116,7 @@ def engine(args: Namespace) -> int:
     verbose(f'(config) caching: {allow_caching}')
     verbose(f'(config) cache-days: {cache_days}')
     verbose(f'(config) cache-file: {cache_file_value}')
-    verbose(f'(config) domain: {ddns_domain}')
-    verbose(f'(config) record: {ddns_record}')
+    verbose(f'(config) domains: {ddns_domains}')
     verbose(f'(config) timeout: {timeout}')
 
     # load any previously cached ip
@@ -174,65 +171,75 @@ def engine(args: Namespace) -> int:
     # prepare interaction with nfsn api endpoint
     session = requests.session()
     session.auth = NfsnAuth(api_login, api_token)
-    base_url = f'{api_endpoint}/{ddns_domain}'
 
-    # query the dns record for the existing ip address (if any)
-    verbose(f'querying dns record: {ddns_record}')
-    opts = {
-        'name': ddns_record,
-    }
-    target_url = f'{base_url}/listRRs'
-    verbose(f'(request) {target_url}')
-    rsp = session.post(target_url, data=opts, timeout=timeout)
-    try:
-        rsp.raise_for_status()
-    except HTTPError as e:
-        err(f'failed to query the dns record\n{e}')
-        return EngineState.NFSN_API_FAILURE_INIT
+    for ddns_entry in ddns_domains:
+        resource, _, tld = ddns_entry.rpartition('.')
+        ddns_record, _, domain = resource.rpartition('.')
+        ddns_domain = f'{domain}.{tld}'
+        verbose(f'processing ddns entry...')
+        verbose(f'ddns-domain: {ddns_domain}')
+        verbose(f'ddns-record: {ddns_record}')
 
-    if args.action == Action.CHECK:
-        success('verified connection with nfsn')
-        return EngineState.OK
+        # api endpoint for this domain
+        base_url = f'{api_endpoint}/{ddns_domain}'
 
-    try:
-        # if we have a dns record, check its value and see if it matches the
-        # known external address
-        rsp_data = rsp.json()
-        if rsp_data:
-            persisted_ip = rsp_data[0].get('data')
+        # query the dns record for the existing ip address (if any)
+        verbose(f'querying dns record: {ddns_record}')
+        opts = {
+            'name': ddns_record,
+        }
+        target_url = f'{base_url}/listRRs'
+        verbose(f'(request) {target_url}')
+        rsp = session.post(target_url, data=opts, timeout=timeout)
+        try:
+            rsp.raise_for_status()
+        except HTTPError as e:
+            err(f'failed to query the dns record\n{e}')
+            return EngineState.NFSN_API_FAILURE_INIT
 
-            if not persisted_ip:
-                err('invalid response from api (no data)')
-            elif persisted_ip == active_ip:
-                verbose('ddns record matches external address')
+        if args.action == Action.CHECK:
+            success('verified connection with nfsn')
+            return EngineState.OK
+
+        try:
+            # if we have a dns record, check its value and see if it matches
+            # the known external address
+            rsp_data = rsp.json()
+            if rsp_data:
+                persisted_ip = rsp_data[0].get('data')
+
+                if not persisted_ip:
+                    err('invalid response from api (no data)')
+                elif persisted_ip == active_ip:
+                    verbose('ddns record matches external address')
+                else:
+                    verbose(f'ip do not match for record: {ddns_record}')
+                    opts = {
+                        'name': ddns_record,
+                        'type': 'A',
+                        'data': active_ip,
+                    }
+                    target_url = f'{base_url}/replaceRR'
+                    verbose(f'(request) {target_url}')
+                    rsp = session.post(target_url, data=opts, timeout=timeout)
+                    rsp.raise_for_status()
+                    log(f'record has been updated with new ip: {active_ip}')
+
+            # we do not have a ddns record setup; add it now
             else:
-                verbose(f'ip do not match for record: {ddns_record}')
+                warn(f'no record found ({ddns_record}); creating a new one...')
                 opts = {
                     'name': ddns_record,
                     'type': 'A',
                     'data': active_ip,
                 }
-                target_url = f'{base_url}/replaceRR'
+                target_url = f'{base_url}/addRR'
                 verbose(f'(request) {target_url}')
                 rsp = session.post(target_url, data=opts, timeout=timeout)
                 rsp.raise_for_status()
-                log(f'record has been updated with new ip: {active_ip}')
-
-        # we do not have a ddns record setup; add it now
-        else:
-            warn(f'no dns record found ({ddns_record}); creating a new one...')
-            opts = {
-                'name': ddns_record,
-                'type': 'A',
-                'data': active_ip,
-            }
-            target_url = f'{base_url}/addRR'
-            verbose(f'(request) {target_url}')
-            rsp = session.post(target_url, data=opts, timeout=timeout)
-            rsp.raise_for_status()
-    except HTTPError as e:
-        err(f'failed to query the dns record\n{e}')
-        return EngineState.NFSN_API_FAILURE
+        except HTTPError as e:
+            err(f'failed to query the dns record\n{e}')
+            return EngineState.NFSN_API_FAILURE
 
     # save the newly detected ip if it has changed
     if allow_caching and cached_ip != active_ip:
