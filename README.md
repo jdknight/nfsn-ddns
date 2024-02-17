@@ -286,7 +286,7 @@ docker compose up --detach
 ```
 
 
-[env-config]: docker/env.default
+[env-config]: https://github.com/jdknight/nfsn-ddns/blob/main/docker/env.default
 [nfsn]: https://www.nearlyfreespeech.net/
 [pip]: https://pip.pypa.io/
 [python]: https://www.python.org/
