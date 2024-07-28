@@ -83,7 +83,7 @@ def main() -> int:
 
         retval = engine(args)
     except KeyboardInterrupt:
-        print('')
+        print()
 
     return retval
 
