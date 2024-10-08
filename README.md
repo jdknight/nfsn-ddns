@@ -19,7 +19,7 @@ following:
 
 ## Requirements
 
-* [Python][python] 3.8+
+* [Python][python] 3.9+
 * [PyYAML][pyyaml]
 * [Requests][requests] 2.30.0+
 
