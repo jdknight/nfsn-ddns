@@ -24,6 +24,8 @@ from nfsn_ddns.log import verbose
 from nfsn_ddns.log import warn
 from nfsn_ddns.myip import fetch_myipv4
 from nfsn_ddns.myip import fetch_myipv6
+from nfsn_ddns.myip_cmd import fetch_myipv4_cmd
+from nfsn_ddns.myip_cmd import fetch_myipv6_cmd
 from pathlib import Path
 from requests.exceptions import HTTPError
 from typing import TYPE_CHECKING
@@ -171,8 +173,12 @@ def engine(args: Namespace) -> int:
 
     if not args.action or args.action == Action.IP:
         if ipv4:
-            endpoints = cfg.myipv4_api_endpoints()
-            active_ipv4 = fetch_myipv4(endpoints=endpoints, timeout=timeout)
+            myipv4_cmd = cfg.myipv4_api_endpoint_cmd()
+            if myipv4_cmd:
+                active_ipv4 = fetch_myipv4_cmd(myipv4_cmd)
+            else:
+                endpoints = cfg.myipv4_api_endpoints()
+                active_ipv4 = fetch_myipv4(endpoints=endpoints, timeout=timeout)
 
             if not active_ipv4:
                 ip_fetch_state = EngineState.MYIP_FETCH_FAILURE
@@ -180,8 +186,12 @@ def engine(args: Namespace) -> int:
                 success(f'detected ipv4: {active_ipv4}')
 
         if ipv6:
-            endpoints = cfg.myipv6_api_endpoints()
-            active_ipv6 = fetch_myipv6(endpoints=endpoints, timeout=timeout)
+            myipv6_cmd = cfg.myipv6_api_endpoint_cmd()
+            if myipv6_cmd:
+                active_ipv6 = fetch_myipv6_cmd(myipv6_cmd)
+            else:
+                endpoints = cfg.myipv6_api_endpoints()
+                active_ipv6 = fetch_myipv6(endpoints=endpoints, timeout=timeout)
 
             if not active_ipv6:
                 ip_fetch_state = EngineState.MYIP_FETCH_FAILURE

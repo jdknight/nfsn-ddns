@@ -236,6 +236,15 @@ class Config:
         """
         return self._fetch('nfsn-api-endpoint')
 
+    def myipv4_api_endpoint_cmd(self) -> Optional[str]:
+        """
+        returns the configured myipv4 api endpoint command value
+
+        Returns:
+            the endpoints value
+        """
+        return self._fetch('myipv4-api-endpoint-cmd')
+
     def myipv4_api_endpoints(self) -> Optional[list[str]]:
         """
         returns the configured myipv4 api endpoints value
@@ -257,6 +266,15 @@ class Config:
             endpoints = None
 
         return endpoints
+
+    def myipv6_api_endpoint_cmd(self) -> Optional[str]:
+        """
+        returns the configured myipv6 api endpoint command value
+
+        Returns:
+            the endpoints value
+        """
+        return self._fetch('myipv6-api-endpoint-cmd')
 
     def myipv6_api_endpoints(self) -> Optional[list[str]]:
         """

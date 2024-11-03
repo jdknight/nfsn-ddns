@@ -45,7 +45,9 @@ class TestConfiguration(NfsnDdnsTestCase):
         self.assertIsNone(self.cfg.ipv4())
         self.assertIsNone(self.cfg.ipv6())
         self.assertIsNone(self.cfg.nfsn_api_endpoint())
+        self.assertIsNone(self.cfg.myipv4_api_endpoint_cmd())
         self.assertIsNone(self.cfg.myipv4_api_endpoints())
+        self.assertIsNone(self.cfg.myipv6_api_endpoint_cmd())
         self.assertIsNone(self.cfg.myipv6_api_endpoints())
         self.assertIsNone(self.cfg.timeout())
 
@@ -171,6 +173,11 @@ class TestConfiguration(NfsnDdnsTestCase):
         os.environ['NFSN_DDNS_NFSN_API_ENDPOINT'] = expected
         self.assertEqual(self.cfg.nfsn_api_endpoint(), expected)
 
+    def test_config_env_myipv4_api_endpoint_cmd(self) -> None:
+        expected = 'teal-copper-boxer'
+        os.environ['NFSN_DDNS_MYIPV4_API_ENDPOINT_CMD'] = expected
+        self.assertEqual(self.cfg.myipv4_api_endpoint_cmd(), expected)
+
     def test_config_env_myipv4_api_endpoints(self) -> None:
         value = 'maroon-copper-hound'
         expected = [
@@ -195,6 +202,11 @@ class TestConfiguration(NfsnDdnsTestCase):
         del os.environ['NFSN_DDNS_MYIPV4_API_ENDPOINTS']
         os.environ['NFSN_DDNS_MYIP_API_ENDPOINTS'] = value  # legacy
         self.assertListEqual(self.cfg.myipv4_api_endpoints(), expected)
+
+    def test_config_env_myipv6_api_endpoint_cmd(self) -> None:
+        expected = 'fuschia-steel-labrador'
+        os.environ['NFSN_DDNS_MYIPV6_API_ENDPOINT_CMD'] = expected
+        self.assertEqual(self.cfg.myipv6_api_endpoint_cmd(), expected)
 
     def test_config_env_myipv6_api_endpoints(self) -> None:
         value = 'blue-platinum-border-collie'
@@ -244,11 +256,13 @@ class TestConfiguration(NfsnDdnsTestCase):
         self.assertEqual(self.cfg.ipv4(), False)
         self.assertEqual(self.cfg.ipv6(), True)
         self.assertEqual(self.cfg.nfsn_api_endpoint(), 'my-nfsn-api-endpoint')
+        self.assertEqual(self.cfg.myipv4_api_endpoint_cmd(), 'my-command-ipv4')
         self.assertListEqual(self.cfg.myipv4_api_endpoints(), [
             'my-myipv4-api-endpoint-1',
             'my-myipv4-api-endpoint-2',
             'my-myipv4-api-endpoint-3',
         ])
+        self.assertEqual(self.cfg.myipv6_api_endpoint_cmd(), 'my-command-ipv6')
         self.assertListEqual(self.cfg.myipv6_api_endpoints(), [
             'my-myipv6-api-endpoint-1',
             'my-myipv6-api-endpoint-2',

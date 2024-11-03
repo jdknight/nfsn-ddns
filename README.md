@@ -177,6 +177,19 @@ By default, this setting is enabled.
 - Environment variable: `NFSN_DDNS_IPV4`
 
 </td></tr>
+<tr><td>IPv4 API Endpoint Command</td><td>
+
+Configures a command to invoke when attempting to fetch the IPv4 address of
+the instance running this utility. The returned IP will be used to update
+the configured DNS `A` record. Configuring this option replaces the ability
+to query an IPv4 address using configured IPv4 API endpoints.
+
+Users can configure the command to use by configuring this option.
+
+- Configuration key: `myipv4-api-endpoint-cmd` *(str)*
+- Environment variable: `NFSN_DDNS_MYIPV4_API_ENDPOINT_CMD` *(str)*
+
+</td></tr>
 <tr><td>IPv4 API Endpoints</td><td>
 
 IPv4 API endpoints are web services used to help determine the public IPv4
@@ -210,6 +223,19 @@ By default, this setting is enabled.
 - Command line option: `--ipv6`,  `--no-ipv6`
 - Configuration key: `ipv6` *(bool)*
 - Environment variable: `NFSN_DDNS_IPV6`
+
+</td></tr>
+<tr><td>IPv6 API Endpoint Command</td><td>
+
+Configures a command to invoke when attempting to fetch the IPv6 address of
+the instance running this utility. The returned IP will be used to update
+the configured DNS `AAAA` record. Configuring this option replaces the ability
+to query an IPv6 address using configured IPv6 API endpoints.
+
+Users can configure the command to use by configuring this option.
+
+- Configuration key: `myipv6-api-endpoint-cmd` *(str)*
+- Environment variable: `NFSN_DDNS_MYIPV6_API_ENDPOINT_CMD` *(str)*
 
 </td></tr>
 <tr><td>IPv6 API Endpoints</td><td>
