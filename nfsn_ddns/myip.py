@@ -2,6 +2,7 @@
 # Copyright nfsn-ddns Contributors
 
 from __future__ import annotations
+from nfsn_ddns import __version__ as nfsn_ddns_version
 from nfsn_ddns.defs import DEFAULT_IP_FETCH_URLS_V4
 from nfsn_ddns.defs import DEFAULT_IP_FETCH_URLS_V6
 from nfsn_ddns.log import err
@@ -96,7 +97,7 @@ def _fetch(type_: type[ipaddress.IPv4Address | ipaddress.IPv6Address],
 
         session = requests.Session()
         session.headers.update({
-            'User-Agent': 'nfsn-ddns',
+            'User-Agent': f'nfsn-ddns/{nfsn_ddns_version}',
         })
 
         try:
