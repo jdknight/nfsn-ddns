@@ -76,7 +76,7 @@ All available configuration options are listed as follows:
 The login/account of the NearlyFreeSpeech.NET user. This is used to
 authenticate API requests.
 
-- Command line option: `--api-login`
+- Command line option: `--api-login <value>`
 - Configuration key: `api-login` *(str)*
 - Environment variable: `NFSN_DDNS_API_LOGIN`
 
@@ -87,7 +87,7 @@ The token to use when authenticating API requests. Members can acquire an
 API token by viewing their profiles and selecting `Manage API Key`. In this
 page, users can request to generate an API token.
 
-- Command line option: `--api-token`
+- Command line option: `--api-token <value>`
 - Configuration key: `api-token` *(str)*
 - Environment variable: `NFSN_DDNS_API_TOKEN`
 
@@ -105,7 +105,7 @@ Multiple domains can be provided, for users who want a DDNS record across
 multiple domains (although the use of CNAME's are recommended when attempting
 to updated multiple records for a single domain).
 
-- Command line option: `--ddns-domain`
+- Command line option: `--ddns-domain <value>`
 - Configuration key: `domains` *(str-list)*
 - Environment variable: `NFSN_DDNS_DOMAINS` *(;-separated)*
 
@@ -139,7 +139,7 @@ matches.
 
 By default, a cache is considered valid for seven (`7`) days.
 
-- Command line option: `--cache-days`
+- Command line option: `--cache-days <value>`
 - Configuration key: `cache-days` *(int)*
 - Environment variable: `NFSN_DDNS_CACHE_DAYS`
 
@@ -160,7 +160,7 @@ that is writable by this utility:
 nfsn-ddns-cached-ip
 ```
 
-- Command line option: `--cache-file`
+- Command line option: `--cache-file <value>`
 - Configuration key: `cache-file`
 - Environment variable: `NFSN_DDNS_CACHE_FILE`
 
@@ -265,7 +265,7 @@ Configures the timeout (in seconds) until any requests to external sources
 (i.e. NFSN API or IP providers) are considered timed out. The default
 timeout for all requests is configured to ten (`10`) seconds.
 
-- Command line option: `--timeout`
+- Command line option: `--timeout <value>`
 - Configuration key: `timeout`
 - Environment variable: `NFSN_DDNS_TIMEOUT`
 
