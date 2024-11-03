@@ -75,22 +75,22 @@ class Config:
             args: the arguments
         """
 
-        if args.api_login:
+        if args.api_login is not None:
             self.config['api-login'] = args.api_login
 
-        if args.api_token:
+        if args.api_token is not None:
             self.config['api-token'] = args.api_token
 
         if args.cache:
             self.config['cache'] = 'true'
 
-        if args.cache_days:
+        if args.cache_days is not None:
             self.config['cache-days'] = args.cache_days
 
-        if args.cache_file:
+        if args.cache_file is not None:
             self.config['cache-file'] = args.cache_file
 
-        if args.ddns_domain:
+        if args.ddns_domain is not None:
             self.config['domains'] = args.ddns_domain
 
         if args.ipv4:
@@ -108,7 +108,7 @@ class Config:
         if args.no_ipv6:
             self.config['ipv6'] = 'false'
 
-        if args.timeout:
+        if args.timeout is not None:
             self.config['timeout'] = args.timeout
 
     def api_login(self) -> Optional[str]:

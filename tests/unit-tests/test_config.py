@@ -29,7 +29,7 @@ class MockedArgs(dict):
 class TestConfiguration(NfsnDdnsTestCase):
     @classmethod
     def setUpClass(cls: type[T]) -> None:
-        test_dir = Path(os.path.realpath(__file__)).parent
+        test_dir = Path(__file__).parent
         cls.dataset = test_dir / 'assets'
 
     def setUp(self) -> None:
@@ -66,6 +66,10 @@ class TestConfiguration(NfsnDdnsTestCase):
     def test_config_args_cache(self) -> None:
         args = MockedArgs()
         args.cache = True
+        self.cfg.accept(args)
+        self.assertEqual(self.cfg.cache(), args.cache)
+
+        args.no_cache = False
         self.cfg.accept(args)
         self.assertEqual(self.cfg.cache(), args.cache)
 
@@ -129,6 +133,10 @@ class TestConfiguration(NfsnDdnsTestCase):
     def test_config_env_cache(self) -> None:
         expected = True
         os.environ['NFSN_DDNS_CACHE'] = '1'
+        self.assertEqual(self.cfg.cache(), expected)
+
+        expected = False
+        os.environ['NFSN_DDNS_CACHE'] = '0'
         self.assertEqual(self.cfg.cache(), expected)
 
     def test_config_env_cache_days(self) -> None:
