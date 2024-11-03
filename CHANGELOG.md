@@ -1,4 +1,4 @@
-# Development
+# 0.3.0 (2024-11-02)
 
 - Ensure parsed IP's version type matches target DNS record type
 - Fixed potential record update failures if more than an `A` record is defined
