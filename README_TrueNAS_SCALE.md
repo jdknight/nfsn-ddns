@@ -56,7 +56,7 @@ After configuration, perform the following to test/verify the setup:
   ```
   cat /var/nfsn-ddns/cached-ip
   ```
-  
+
   The output should report the instance's public IP cached in the file.
 - Log in to NearlyFreeSpeech.net and pull up the domain's DNS information.
   Ensure that the expected DDNS address (e.g. `ddns.example.com`) was
