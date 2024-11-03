@@ -7,7 +7,7 @@ build-backend = 'hatchling.build'
 [project]
 name = 'nfsn-ddns'
 description = 'NearlyFreeSpeech.net Dynamic DNS Utility'
-requires-python = '>=3.8'
+requires-python = '>=3.9'
 readme = 'README.md'
 classifiers = [
     'Development Status :: 4 - Beta',
@@ -17,7 +17,6 @@ classifiers = [
     'Programming Language :: Python',
     'Programming Language :: Python :: 3 :: Only',
     'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 3.8',
     'Programming Language :: Python :: 3.9',
     'Programming Language :: Python :: 3.10',
     'Programming Language :: Python :: 3.11',
