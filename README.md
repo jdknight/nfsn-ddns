@@ -125,7 +125,7 @@ considered a valid source of information for configured number of days
 
 By default, this setting is not enabled (except in container environments).
 
-- Command line option: `--cache`
+- Command line option: `--cache`,  `--no-cache`
 - Configuration key: `cache` *(bool)*
 - Environment variable: `NFSN_DDNS_CACHE`
 
