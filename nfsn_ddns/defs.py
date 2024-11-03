@@ -32,13 +32,16 @@ else:
 # default file for configuration data
 DEFAULT_CFG_FILE = Path('config.yaml')
 
-# default api endpoints to fetch current ip
-DEFAULT_IP_FETCH_URLS = [
+# default api endpoints to fetch current ipv4 address
+DEFAULT_IP_FETCH_URLS_V4 = [
     'https://api.ipify.org',
-    'https://checkip.amazonaws.com/',
-    'https://ifconfig.me/ip',
     'https://ipinfo.io/ip',
-    'https://trackip.net/ip',
+]
+
+# default api endpoints to fetch current ipv6 address
+DEFAULT_IP_FETCH_URLS_V6 = [
+    'https://api6.ipify.org',
+    'https://v6.ipinfo.io/ip',
 ]
 
 # default timeout for any requests made

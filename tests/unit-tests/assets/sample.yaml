@@ -7,9 +7,15 @@ nfsn-ddns:
   domains:
     - my-record1.my-domain1
     - my-record2.my-domain2
+  ipv4: false
+  ipv6: true
   nfsn-api-endpoint: my-nfsn-api-endpoint
-  myip-api-endpoints:
-    - my-myip-api-endpoint-1
-    - my-myip-api-endpoint-2
-    - my-myip-api-endpoint-3
+  myipv4-api-endpoints:
+    - my-myipv4-api-endpoint-1
+    - my-myipv4-api-endpoint-2
+    - my-myipv4-api-endpoint-3
+  myipv6-api-endpoints:
+    - my-myipv6-api-endpoint-1
+    - my-myipv6-api-endpoint-2
+    - my-myipv6-api-endpoint-3
   timeout: 10

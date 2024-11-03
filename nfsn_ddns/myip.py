@@ -2,7 +2,8 @@
 # Copyright nfsn-ddns Contributors
 
 from __future__ import annotations
-from nfsn_ddns.defs import DEFAULT_IP_FETCH_URLS
+from nfsn_ddns.defs import DEFAULT_IP_FETCH_URLS_V4
+from nfsn_ddns.defs import DEFAULT_IP_FETCH_URLS_V6
 from nfsn_ddns.log import err
 from nfsn_ddns.log import warn
 from nfsn_ddns.log import verbose
@@ -15,7 +16,44 @@ if TYPE_CHECKING:
     from typing import Union
 
 
-def fetch_myip(endpoints: Union[None, str, list[str]] = None,
+def fetch_myipv4(endpoints: Union[None, str, list[str]] = None,
+        timeout: int = 3) -> str:
+    """
+    query for the external ipv4 address for this instance
+
+    This call will query an available API endpoint to determine the remote
+    IPv4 (external) address for this instance. See `_fetch` for more details.
+
+    Args:
+        endpoints (optional): the explicit endpoint(s) to query on
+        timeout (optional): timeout for any requests made
+
+    Returns:
+        the ip address; `None` on failure
+    """
+    return _fetch(ipaddress.IPv4Address, endpoints=endpoints, timeout=timeout)
+
+
+def fetch_myipv6(endpoints: Union[None, str, list[str]] = None,
+        timeout: int = 3) -> str:
+    """
+    query for the external ipv6 address for this instance
+
+    This call will query an available API endpoint to determine the remote
+    IPv6 (external) address for this instance. See `_fetch` for more details.
+
+    Args:
+        endpoints (optional): the explicit endpoint(s) to query on
+        timeout (optional): timeout for any requests made
+
+    Returns:
+        the ip address; `None` on failure
+    """
+    return _fetch(ipaddress.IPv6Address, endpoints=endpoints, timeout=timeout)
+
+
+def _fetch(type_: type[ipaddress.IPv4Address | ipaddress.IPv6Address],
+        endpoints: Union[None, str, list[str]] = None,
         timeout: int = 3) -> str:
     """
     query for the external ip address for this instance
@@ -32,6 +70,7 @@ def fetch_myip(endpoints: Union[None, str, list[str]] = None,
     provided endpoint will be attempted on.
 
     Args:
+        type_: the type of address being fetched
         endpoints (optional): the explicit endpoint(s) to query on
         timeout (optional): timeout for any requests made
 
@@ -46,8 +85,10 @@ def fetch_myip(endpoints: Union[None, str, list[str]] = None,
             available_endpoints = [
                 endpoints,
             ]
+    elif type_ == ipaddress.IPv6Address:
+        available_endpoints = list(DEFAULT_IP_FETCH_URLS_V6)
     else:
-        available_endpoints = DEFAULT_IP_FETCH_URLS
+        available_endpoints = list(DEFAULT_IP_FETCH_URLS_V4)
 
     while available_endpoints:
         endpoint_idx = random.randrange(len(available_endpoints))  # noqa: S311
@@ -68,9 +109,12 @@ def fetch_myip(endpoints: Union[None, str, list[str]] = None,
             except ValueError:
                 warn(f'(myip) endpoint provided invalid address: {target}')
             else:
-                ip_str = str(ip)
-                verbose(f'(myip) resolved self address: {ip_str}')
-                return ip_str
+                if not isinstance(ip, type_):
+                    warn(f'(myip) endpoint provided unexpected ipv: {target}')
+                else:
+                    ip_str = str(ip)
+                    verbose(f'(myip) resolved self address: {ip_str}')
+                    return ip_str
         except requests.exceptions.RequestException as e:
             warn(f'(myip) fail to fetch on endpoint: {target}\n{e}')
 

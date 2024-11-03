@@ -1,32 +1,66 @@
 # SPDX-License-Identifier: BSD-2-Clause
 # Copyright nfsn-ddns Contributors
 
-from nfsn_ddns.myip import fetch_myip
+from nfsn_ddns.myip import fetch_myipv4
+from nfsn_ddns.myip import fetch_myipv6
 from tests import NfsnDdnsTestCase
 import responses
 
 
 class TestMyIp(NfsnDdnsTestCase):
     @responses.activate
-    def test_myip_fetch_address_invalid(self) -> None:
+    def test_myip_fetch_address_invalid_unknown_data(self) -> None:
         expected_id = 'some-data'
         responses.get(
             url='https://example.com/ip',
             body=expected_id,
         )
 
-        found_ip = fetch_myip(endpoints='https://example.com/ip')
+        found_ip = fetch_myipv4(endpoints='https://example.com/ip')
         self.assertFalse(found_ip)
 
     @responses.activate
-    def test_myip_fetch_address_valid(self) -> None:
+    def test_myip_fetch_address_unexpected_ipv4(self) -> None:
+        expected_id = '203.0.113.1'
+        responses.get(
+            url='https://example.com/ip',
+            body=expected_id,
+        )
+
+        found_ip = fetch_myipv6(endpoints='https://example.com/ip')
+        self.assertFalse(found_ip)
+
+    @responses.activate
+    def test_myip_fetch_address_unexpected_ipv6(self) -> None:
+        expected_id = '2001:db8::2'
+        responses.get(
+            url='https://example.com/ip',
+            body=expected_id,
+        )
+
+        found_ip = fetch_myipv4(endpoints='https://example.com/ip')
+        self.assertFalse(found_ip)
+
+    @responses.activate
+    def test_myip_fetch_address_valid_ipv4(self) -> None:
         expected_ip = '203.0.113.1'
         responses.get(
             url='https://example.com/ip',
             body=expected_ip,
         )
 
-        found_ip = fetch_myip(endpoints='https://example.com/ip')
+        found_ip = fetch_myipv4(endpoints='https://example.com/ip')
+        self.assertEqual(found_ip, expected_ip)
+
+    @responses.activate
+    def test_myip_fetch_address_valid_ipv6(self) -> None:
+        expected_ip = '2001:db8::1'
+        responses.get(
+            url='https://example.com/ip',
+            body=expected_ip,
+        )
+
+        found_ip = fetch_myipv6(endpoints='https://example.com/ip')
         self.assertEqual(found_ip, expected_ip)
 
     @responses.activate
@@ -52,7 +86,7 @@ class TestMyIp(NfsnDdnsTestCase):
             'https://example.org/ip3',
         ]
 
-        found_ip = fetch_myip(endpoints=endpoints)
+        found_ip = fetch_myipv4(endpoints=endpoints)
         self.assertFalse(found_ip)
         self.assertEqual(rsp1.call_count, 1)
         self.assertEqual(rsp2.call_count, 1)
@@ -89,5 +123,5 @@ class TestMyIp(NfsnDdnsTestCase):
             'https://example.org/ip4',
         ]
 
-        found_ip = fetch_myip(endpoints=endpoints)
+        found_ip = fetch_myipv4(endpoints=endpoints)
         self.assertEqual(found_ip, expected_ip)

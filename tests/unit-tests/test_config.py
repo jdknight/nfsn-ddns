@@ -42,8 +42,11 @@ class TestConfiguration(NfsnDdnsTestCase):
         self.assertIsNone(self.cfg.cache_days())
         self.assertIsNone(self.cfg.cache_file())
         self.assertIsNone(self.cfg.ddns_domains())
+        self.assertIsNone(self.cfg.ipv4())
+        self.assertIsNone(self.cfg.ipv6())
         self.assertIsNone(self.cfg.nfsn_api_endpoint())
-        self.assertIsNone(self.cfg.myip_api_endpoints())
+        self.assertIsNone(self.cfg.myipv4_api_endpoints())
+        self.assertIsNone(self.cfg.myipv6_api_endpoints())
         self.assertIsNone(self.cfg.timeout())
 
     def test_config_args_api_login(self) -> None:
@@ -85,6 +88,26 @@ class TestConfiguration(NfsnDdnsTestCase):
         self.cfg.accept(args)
         self.assertEqual(self.cfg.ddns_domains(), args.ddns_domain)
 
+    def test_config_args_ipv4(self) -> None:
+        args = MockedArgs()
+        args.ipv4 = True
+        self.cfg.accept(args)
+        self.assertEqual(self.cfg.ipv4(), args.ipv4)
+
+        args.no_cache = False
+        self.cfg.accept(args)
+        self.assertEqual(self.cfg.ipv4(), args.ipv4)
+
+    def test_config_args_ipv6(self) -> None:
+        args = MockedArgs()
+        args.ipv6 = True
+        self.cfg.accept(args)
+        self.assertEqual(self.cfg.ipv6(), args.ipv6)
+
+        args.no_ipv6 = False
+        self.cfg.accept(args)
+        self.assertEqual(self.cfg.ipv6(), args.ipv6)
+
     def test_config_args_timeout(self) -> None:
         args = MockedArgs()
         args.timeout = 4
@@ -125,33 +148,86 @@ class TestConfiguration(NfsnDdnsTestCase):
         os.environ['NFSN_DDNS_DOMAINS'] = value
         self.assertEqual(self.cfg.ddns_domains(), expected)
 
+    def test_config_env_ipv4(self) -> None:
+        expected = True
+        os.environ['NFSN_DDNS_IPV4'] = '1'
+        self.assertEqual(self.cfg.ipv4(), expected)
+
+        expected = False
+        os.environ['NFSN_DDNS_IPV4'] = '0'
+        self.assertEqual(self.cfg.ipv4(), expected)
+
+    def test_config_env_ipv6(self) -> None:
+        expected = True
+        os.environ['NFSN_DDNS_IPV6'] = '1'
+        self.assertEqual(self.cfg.ipv6(), expected)
+
+        expected = False
+        os.environ['NFSN_DDNS_IPV6'] = '0'
+        self.assertEqual(self.cfg.ipv6(), expected)
+
     def test_config_env_nfsn_api_endpoint(self) -> None:
         expected = 'fuschia-aluminium-chow-chow'
         os.environ['NFSN_DDNS_NFSN_API_ENDPOINT'] = expected
         self.assertEqual(self.cfg.nfsn_api_endpoint(), expected)
 
-    def test_config_env_myip_api_endpoints(self) -> None:
+    def test_config_env_myipv4_api_endpoints(self) -> None:
         value = 'maroon-copper-hound'
         expected = [
             'maroon-copper-hound',
         ]
-        os.environ['NFSN_DDNS_MYIP_API_ENDPOINTS'] = value
-        self.assertListEqual(self.cfg.myip_api_endpoints(), expected)
+        os.environ['NFSN_DDNS_MYIPV4_API_ENDPOINTS'] = value
+        self.assertListEqual(self.cfg.myipv4_api_endpoints(), expected)
 
         value = 'olive-mercury-spitz;gray-gold-dachshund'
         expected = [
             'olive-mercury-spitz',
             'gray-gold-dachshund',
         ]
-        os.environ['NFSN_DDNS_MYIP_API_ENDPOINTS'] = value
-        self.assertListEqual(self.cfg.myip_api_endpoints(), expected)
+        os.environ['NFSN_DDNS_MYIPV4_API_ENDPOINTS'] = value
+        self.assertListEqual(self.cfg.myipv4_api_endpoints(), expected)
+
+        value = 'navy-steel-saint-bernard;lime-gold-pekingese'
+        expected = [
+            'navy-steel-saint-bernard',
+            'lime-gold-pekingese',
+        ]
+        del os.environ['NFSN_DDNS_MYIPV4_API_ENDPOINTS']
+        os.environ['NFSN_DDNS_MYIP_API_ENDPOINTS'] = value  # legacy
+        self.assertListEqual(self.cfg.myipv4_api_endpoints(), expected)
+
+    def test_config_env_myipv6_api_endpoints(self) -> None:
+        value = 'blue-platinum-border-collie'
+        expected = [
+            'blue-platinum-border-collie',
+        ]
+        os.environ['NFSN_DDNS_MYIPV6_API_ENDPOINTS'] = value
+        self.assertListEqual(self.cfg.myipv6_api_endpoints(), expected)
+
+        value = 'teal-lead-spitz;silver-titanium-labrador'
+        expected = [
+            'teal-lead-spitz',
+            'silver-titanium-labrador',
+        ]
+        os.environ['NFSN_DDNS_MYIPV6_API_ENDPOINTS'] = value
+        self.assertListEqual(self.cfg.myipv6_api_endpoints(), expected)
 
     def test_config_env_timeout(self) -> None:
         expected = 2
         os.environ['NFSN_DDNS_TIMEOUT'] = '2'
         self.assertEqual(self.cfg.timeout(), expected)
 
-    def test_config_file_default(self) -> None:
+    def test_config_file_invalid(self) -> None:
+        fname = self.dataset / 'invalid.yaml'
+        loaded = self.cfg.load(fname, expected=True)
+        self.assertFalse(loaded)
+
+    def test_config_file_missing(self) -> None:
+        fname = self.dataset / 'missing.yaml'
+        loaded = self.cfg.load(fname, expected=True)
+        self.assertFalse(loaded)
+
+    def test_config_file_sample(self) -> None:
         fname = self.dataset / 'sample.yaml'
         loaded = self.cfg.load(fname, expected=True)
         self.assertTrue(loaded)
@@ -165,20 +241,17 @@ class TestConfiguration(NfsnDdnsTestCase):
             'my-record1.my-domain1',
             'my-record2.my-domain2',
         ])
+        self.assertEqual(self.cfg.ipv4(), False)
+        self.assertEqual(self.cfg.ipv6(), True)
         self.assertEqual(self.cfg.nfsn_api_endpoint(), 'my-nfsn-api-endpoint')
-        self.assertListEqual(self.cfg.myip_api_endpoints(), [
-            'my-myip-api-endpoint-1',
-            'my-myip-api-endpoint-2',
-            'my-myip-api-endpoint-3',
+        self.assertListEqual(self.cfg.myipv4_api_endpoints(), [
+            'my-myipv4-api-endpoint-1',
+            'my-myipv4-api-endpoint-2',
+            'my-myipv4-api-endpoint-3',
+        ])
+        self.assertListEqual(self.cfg.myipv6_api_endpoints(), [
+            'my-myipv6-api-endpoint-1',
+            'my-myipv6-api-endpoint-2',
+            'my-myipv6-api-endpoint-3',
         ])
         self.assertEqual(self.cfg.timeout(), 10)
-
-    def test_config_file_invalid(self) -> None:
-        fname = self.dataset / 'invalid.yaml'
-        loaded = self.cfg.load(fname, expected=True)
-        self.assertFalse(loaded)
-
-    def test_config_file_missing(self) -> None:
-        fname = self.dataset / 'missing.yaml'
-        loaded = self.cfg.load(fname, expected=True)
-        self.assertFalse(loaded)

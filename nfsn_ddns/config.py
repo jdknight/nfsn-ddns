@@ -4,6 +4,7 @@
 from __future__ import annotations
 from nfsn_ddns.defs import NFSN_DDNS_ENV_PREFIX
 from nfsn_ddns.log import err
+from nfsn_ddns.log import warn
 from nfsn_ddns.log import verbose
 from nfsn_ddns.utils import str2bool
 from pathlib import Path
@@ -92,8 +93,20 @@ class Config:
         if args.ddns_domain:
             self.config['domains'] = args.ddns_domain
 
+        if args.ipv4:
+            self.config['ipv4'] = 'true'
+
+        if args.ipv6:
+            self.config['ipv6'] = 'true'
+
         if args.no_cache:
             self.config['cache'] = 'false'
+
+        if args.no_ipv4:
+            self.config['ipv4'] = 'false'
+
+        if args.no_ipv6:
+            self.config['ipv6'] = 'false'
 
         if args.timeout:
             self.config['timeout'] = args.timeout
@@ -182,6 +195,38 @@ class Config:
 
         return domains
 
+    def ipv4(self) -> Optional[bool]:
+        """
+        returns the configured ipv4 state value
+
+        Returns:
+            the ipv4 state value
+        """
+        raw_value = self._fetch('ipv4')
+        if raw_value is None:
+            return None
+
+        try:
+            return str2bool(raw_value)
+        except ValueError:
+            return None
+
+    def ipv6(self) -> Optional[bool]:
+        """
+        returns the configured ipv6 state value
+
+        Returns:
+            the ipv6 state value
+        """
+        raw_value = self._fetch('ipv6')
+        if not raw_value:
+            return None
+
+        try:
+            return str2bool(raw_value)
+        except ValueError:
+            return None
+
     def nfsn_api_endpoint(self) -> Optional[str]:
         """
         returns the configured nfsn api endpoint value
@@ -191,14 +236,36 @@ class Config:
         """
         return self._fetch('nfsn-api-endpoint')
 
-    def myip_api_endpoints(self) -> Optional[list[str]]:
+    def myipv4_api_endpoints(self) -> Optional[list[str]]:
         """
-        returns the configured myip api endpoints value
+        returns the configured myipv4 api endpoints value
 
         Returns:
             the endpoints value
         """
-        raw_endpoints = self._fetch('myip-api-endpoints')
+        raw_endpoints = self._fetch('myipv4-api-endpoints')
+        if not raw_endpoints:
+            raw_endpoints = self._fetch('myip-api-endpoints')  # legacy
+            if raw_endpoints:
+                warn('using legacy configuration for ipv4 api endpoints')
+
+        if isinstance(raw_endpoints, list):
+            endpoints = raw_endpoints
+        elif isinstance(raw_endpoints, str):
+            endpoints = raw_endpoints.split(';')
+        else:
+            endpoints = None
+
+        return endpoints
+
+    def myipv6_api_endpoints(self) -> Optional[list[str]]:
+        """
+        returns the configured myipv6 api endpoints value
+
+        Returns:
+            the endpoints value
+        """
+        raw_endpoints = self._fetch('myipv6-api-endpoints')
 
         if isinstance(raw_endpoints, list):
             endpoints = raw_endpoints
@@ -275,7 +342,7 @@ class Config:
 
         value = self.config.get(key, None)
 
-        if not value and env:
+        if value is None and env:
             env_key = key.upper().replace('-', '_')
             value = os.environ.get(f'{NFSN_DDNS_ENV_PREFIX}{env_key}', None)
 

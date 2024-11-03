@@ -22,10 +22,12 @@ from nfsn_ddns.log import log
 from nfsn_ddns.log import success
 from nfsn_ddns.log import verbose
 from nfsn_ddns.log import warn
-from nfsn_ddns.myip import fetch_myip
+from nfsn_ddns.myip import fetch_myipv4
+from nfsn_ddns.myip import fetch_myipv6
 from pathlib import Path
 from requests.exceptions import HTTPError
 from typing import TYPE_CHECKING
+import json
 import os
 import requests
 import sys
@@ -77,6 +79,8 @@ def engine(args: Namespace) -> int:
     cache_days = cfg.cache_days()
     cache_file = cfg.cache_file()
     ddns_domains = cfg.ddns_domains()
+    ipv4 = cfg.ipv4()
+    ipv6 = cfg.ipv6()
     timeout = cfg.timeout()
 
     # verified via cfg.validate()
@@ -101,6 +105,10 @@ def engine(args: Namespace) -> int:
 
     cache_files = [cache_file] if cache_file else DEFAULT_CACHE_FILES
 
+    # query ipv4 by default is not configured
+    if ipv4 is None:
+        ipv4 = True
+
     if timeout is None:
         timeout = DEFAULT_TIMEOUT
     elif timeout < MIN_TIMEOUT:
@@ -117,10 +125,17 @@ def engine(args: Namespace) -> int:
     verbose(f'(config) cache-days: {cache_days}')
     verbose(f'(config) cache-file: {cache_file_value}')
     verbose(f'(config) domains: {ddns_domains}')
+    verbose(f'(config) ipv4: {ipv4}')
+    verbose(f'(config) ipv6: {ipv6}')
     verbose(f'(config) timeout: {timeout}')
 
+    # ensure we have at least one operating mode
+    if args.action != Action.CHECK and not ipv4 and not ipv6:
+        err('both ipv4 and ipv6 querying is disabled by configuration')
+        return EngineState.BAD_CONFIG
+
     # load any previously cached ip
-    cached_ip = None
+    cached_data = {}
     if allow_caching:
         # find the first available file
         found_cache_file = None
@@ -145,28 +160,49 @@ def engine(args: Namespace) -> int:
                     verbose(f'cache not stale for another {remaining} days')
                     verbose('attempting to load cached ip from file')
                     with found_cache_file.open() as f:
-                        cached_ip = f.read()
-            except OSError:
+                        cached_data = json.load(f)
+            except (json.JSONDecodeError, OSError):
                 pass
 
     # acquire the known external ip address for this instance
-    active_ip = ''
+    active_ipv4 = ''
+    active_ipv6 = ''
+    ip_fetch_state = EngineState.OK
 
     if not args.action or args.action == Action.IP:
-        endpoints = cfg.myip_api_endpoints()
-        active_ip = fetch_myip(endpoints=endpoints, timeout=timeout)
-        if not active_ip:
-            return EngineState.MYIP_FETCH_FAILURE
+        if ipv4:
+            endpoints = cfg.myipv4_api_endpoints()
+            active_ipv4 = fetch_myipv4(endpoints=endpoints, timeout=timeout)
+
+            if not active_ipv4:
+                ip_fetch_state = EngineState.MYIP_FETCH_FAILURE
+            elif args.action == Action.IP:
+                success(f'detected ipv4: {active_ipv4}')
+
+        if ipv6:
+            endpoints = cfg.myipv6_api_endpoints()
+            active_ipv6 = fetch_myipv6(endpoints=endpoints, timeout=timeout)
+
+            if not active_ipv6:
+                ip_fetch_state = EngineState.MYIP_FETCH_FAILURE
+            elif args.action == Action.IP:
+                success(f'detected ipv6: {active_ipv6}')
 
     if args.action == Action.IP:
-        success(f'detected ip: {active_ip}')
-        return EngineState.OK
+        return ip_fetch_state
 
     # if the active ip matches the cached ip, we may not have to interact
     # with nfsn's api
-    if allow_caching and cached_ip == active_ip:
-        verbose('cached public ip matches detected; stopping')
-        return EngineState.OK
+    ipv4_cache_hit = cached_data.get('ipv4') == active_ipv4
+    ipv6_cache_hit = cached_data.get('ipv6') == active_ipv6
+    if allow_caching:
+        if ipv4 and not ipv4_cache_hit:
+            verbose('ipv4 cache was not a match')
+        elif ipv6 and not ipv6_cache_hit:
+            verbose('ipv6 cache was not a match')
+        else:
+            verbose('cached public ip matches detected; stopping')
+            return EngineState.OK
 
     # prepare interaction with nfsn api endpoint
     session = requests.session()
@@ -201,37 +237,58 @@ def engine(args: Namespace) -> int:
             success('verified connection with nfsn')
             return EngineState.OK
 
-        try:
-            # if we have a dns record, check its value and see if it matches
-            # the known external address
-            rsp_data = rsp.json()
-            if rsp_data:
-                persisted_ip = rsp_data[0].get('data')
+        # populate desired record entries
+        pending_cfgs = {}
+        if ipv4:
+            pending_cfgs['A'] = active_ipv4
+        if ipv6:
+            pending_cfgs['AAAA'] = active_ipv6
 
+        try:
+            rsp_data = rsp.json()
+
+            # if we have a dns record, process each response record into a
+            # dictionary that we can use for comparisions
+            reported_rrs = {}
+            if rsp_data:
+                for rr_entry in rsp_data:
+                    rr_type = rr_entry.get('type')
+                    rr_data = rr_entry.get('data')
+                    if rr_type and rr_data:
+                        reported_rrs[rr_type] = rr_data
+
+            # cycle through pending configurations and update any record that
+            # has stale data
+            for rr_type in list(pending_cfgs):
+                new_value = pending_cfgs[rr_type]
+                persisted_ip = reported_rrs.get(rr_type)
                 if not persisted_ip:
-                    err('invalid response from api (no data)')
-                elif persisted_ip == active_ip:
-                    verbose('ddns record matches external address')
+                    continue
+
+                if persisted_ip == new_value:
+                    verbose(f'ddns record ({rr_type}) matches external address')
                 else:
                     verbose(f'ip do not match for record: {ddns_record}')
                     opts = {
                         'name': ddns_record,
-                        'type': 'A',
-                        'data': active_ip,
+                        'type': rr_type,
+                        'data': new_value,
                     }
                     target_url = f'{base_url}/replaceRR'
                     verbose(f'(request) {target_url}')
                     rsp = session.post(target_url, data=opts, timeout=timeout)
                     rsp.raise_for_status()
-                    log(f'record has been updated with new ip: {active_ip}')
+                    log(f'record ({rr_type}) has been updated: {new_value}')
 
-            # we do not have a ddns record setup; add it now
-            else:
-                warn(f'no record found ({ddns_record}); creating a new one...')
+                del pending_cfgs[rr_type]
+
+            # for any entries that do not have a ddns record setup, add it now
+            for rr_type, new_value in pending_cfgs.items():
+                warn(f'no record found ({ddns_record}; {rr_type}); creating...')
                 opts = {
                     'name': ddns_record,
-                    'type': 'A',
-                    'data': active_ip,
+                    'type': rr_type,
+                    'data': new_value,
                 }
                 target_url = f'{base_url}/addRR'
                 verbose(f'(request) {target_url}')
@@ -242,7 +299,7 @@ def engine(args: Namespace) -> int:
             return EngineState.NFSN_API_FAILURE
 
     # save the newly detected ip if it has changed
-    if allow_caching and cached_ip != active_ip:
+    if allow_caching and (not ipv4_cache_hit or not ipv6_cache_hit):
         for cache_file_entry in cache_files:
             cache_file = Path(str(cache_file_entry).format(uid=uid))
 
@@ -252,9 +309,12 @@ def engine(args: Namespace) -> int:
                     verbose(f'preparing cache container: {cache_container}')
                     cache_container.mkdir(parents=True)
 
-                verbose(f'persisting ip ({active_ip}) to cache: {cache_file}')
+                verbose(f'persisting cache: {cache_file}')
                 with cache_file.open('w') as f:
-                    f.write(active_ip)
+                    json.dump({
+                        'ipv4': active_ipv4,
+                        'ipv6': active_ipv6,
+                    }, f)
 
                 # if we are able to write to this catch file, we are done!
                 break

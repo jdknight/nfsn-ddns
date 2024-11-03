@@ -8,11 +8,11 @@
 ## Overview
 
 The following provides a utility to update a [NearlyFreeSpeech.NET][nfsn]
-DNS record with a dynamic IP address. Invoking this utility will perform the
-following:
+DNS record with a dynamic IP address. The default process when invoking this
+utility will perform the following:
 
 - Selecting a random provider to query for a public IP of the running host.
-- Query a NearlyFreeSpeech.NET domain for a configured IP on a `A` record.
+- Query a NearlyFreeSpeech.NET API for a configured IP on DNS record.
 - Compare the address, and update if they do not match.
 - *(optional)* Cache the detected public address set on NearlyFreeSpeech.NET
    for a couple of days (configurable) to limit API requests.
@@ -165,28 +165,72 @@ nfsn-ddns-cached-ip
 - Environment variable: `NFSN_DDNS_CACHE_FILE`
 
 </td></tr>
-<tr><td>IP API Endpoints</td><td>
+<tr><td>IPv4</td><td>
 
-IP API endpoints are web services used to help determine the public IP
+Configure whether this utility will attempt to determine an IPv4 address
+and attempt to configure an `A` record.
+
+By default, this setting is enabled.
+
+- Command line option: `--ipv4`,  `--no-ipv4`
+- Configuration key: `ipv4` *(bool)*
+- Environment variable: `NFSN_DDNS_IPV4`
+
+</td></tr>
+<tr><td>IPv4 API Endpoints</td><td>
+
+IPv4 API endpoints are web services used to help determine the public IPv4
 address of the instance running this utility. The detected IP will be used
-to update the configured DNS record.
+to update the configured DNS `A` record.
 
 The endpoint used is chosen at random each run. If a given endpoint cannot
-be accessed, other endpoints are used until an IP address is provided or
+be accessed, other endpoints are used until an IPv4 address is provided or
 all endpoints have been exhausted.
 
 The default endpoints used are as follows:
 
 - https://api.ipify.org
-- https://checkip.amazonaws.com/
-- https://ifconfig.me/ip
 - https://ipinfo.io/ip
-- https://trackip.net/ip
 
 Users can override what endpoints to use by configuring this option.
 
-- Configuration key: `myip-api-endpoints` *(str-list)*
-- Environment variable: `NFSN_DDNS_MYIP_API_ENDPOINTS` *(;-separated)*
+- Configuration key: `myipv4-api-endpoints` *(str-list)*
+- Configuration key (legacy): `myip-api-endpoints` *(str-list)*
+- Environment variable: `NFSN_DDNS_MYIPV4_API_ENDPOINTS` *(;-separated)*
+- Environment variable (legacy): `NFSN_DDNS_MYIP_API_ENDPOINTS` *(;-separated)*
+
+</td></tr>
+<tr><td>IPv6</td><td>
+
+Configure whether this utility will attempt to determine an IPv6 address
+and attempt to configure an `AAAA` record.
+
+By default, this setting is enabled.
+
+- Command line option: `--ipv6`,  `--no-ipv6`
+- Configuration key: `ipv6` *(bool)*
+- Environment variable: `NFSN_DDNS_IPV6`
+
+</td></tr>
+<tr><td>IPv6 API Endpoints</td><td>
+
+IPv6 API endpoints are web services used to help determine the public IPv6
+address of the instance running this utility. The detected IP will be used
+to update the configured DNS `AAAA` record.
+
+The endpoint used is chosen at random each run. If a given endpoint cannot
+be accessed, other endpoints are used until an IPv6 address is provided or
+all endpoints have been exhausted.
+
+The default endpoints used are as follows:
+
+- https://api6.ipify.org
+- https://v6.ipinfo.io/ip
+
+Users can override what endpoints to use by configuring this option.
+
+- Configuration key: `myipv6-api-endpoints` *(str-list)*
+- Environment variable: `NFSN_DDNS_MYIPV6_API_ENDPOINTS` *(;-separated)*
 
 </td></tr>
 <tr><td>Timeout</td><td>

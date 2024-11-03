@@ -39,7 +39,11 @@ def main() -> int:
         parser.add_argument('--cfg', type=Path)
         parser.add_argument('--ddns-domain', action='append', nargs='+')
         parser.add_argument('--help', '-h', action='store_true')
+        parser.add_argument('--ipv4', action='store_true')
+        parser.add_argument('--ipv6', action='store_true')
         parser.add_argument('--no-cache', action='store_true')
+        parser.add_argument('--no-ipv4', action='store_true')
+        parser.add_argument('--no-ipv6', action='store_true')
         parser.add_argument('--nocolorout', action='store_true')
         parser.add_argument('--quiet', action='store_true')
         parser.add_argument('--timeout', type=int)
@@ -113,6 +117,8 @@ def usage() -> str:
  --cfg <file>              Configuration file to load
  --ddns-domain <domain>    The domain to be updated
  -h, --help                Show this help
+ --ipv4                    Whether to process IPv4 (default on)
+ --ipv6                    Whether to process IPv6 (default off)
  --no-cache                Explicitly disable any cache attempts
  --nocolorout              Explicitly disable colorized output
  --quiet                   Suppress startup banner
