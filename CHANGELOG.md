@@ -1,5 +1,6 @@
 # Development
 
+- Ensure parsed IP's version type matches target DNS record type
 - Fixed potential record update failures if more than an `A` record is defined
 - Support IPv6 (`AAAA` records)
 - Support command line argument overrides for fetching addresses
