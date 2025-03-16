@@ -7,6 +7,9 @@ build-backend = 'hatchling.build'
 [project]
 name = 'nfsn-ddns'
 description = 'NearlyFreeSpeech.net Dynamic DNS Utility'
+authors = [
+    {name = 'James Knight', email = 'git@jdknight.me'},
+]
 requires-python = '>=3.9'
 readme = 'README.md'
 classifiers = [
