@@ -25,9 +25,11 @@ utility will perform the following:
 
 ## Installation
 
-This tool can be installed using [pip][pip]:
+This tool can be installed using [pip][pip] or [pipx][pipx]:
 
 ```shell
+pipx install nfsn-ddns
+ (or)
 pip install nfsn-ddns
  (or)
 python -m pip install nfsn-ddns
@@ -359,6 +361,7 @@ docker compose up --detach
 [env-config]: https://github.com/jdknight/nfsn-ddns/blob/main/docker/env.default
 [nfsn]: https://www.nearlyfreespeech.net/
 [pip]: https://pip.pypa.io/
+[pipx]: https://pipx.pypa.io/
 [python]: https://www.python.org/
 [pyyaml]: https://pyyaml.org/
 [requests]: https://requests.readthedocs.io/
