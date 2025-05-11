@@ -3,8 +3,6 @@ lint.select = [
 ]
 
 lint.ignore = [
-    # deprecated rule
-    'ANN101',
     # we are a bit complex for now
     'C90',
     # ignore pydocstyle
