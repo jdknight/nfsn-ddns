@@ -24,4 +24,5 @@ lint.ignore = [
     'T20',
     # still supporting pre-python v3.10
     'UP007',
+    'UP045',
 ]
