@@ -10,7 +10,7 @@ description = 'NearlyFreeSpeech.net Dynamic DNS Utility'
 authors = [
     {name = 'James Knight', email = 'git@jdknight.me'},
 ]
-requires-python = '>=3.9'
+requires-python = '>=3.10'
 readme = 'README.md'
 license = 'BSD-2-Clause'
 classifiers = [
@@ -20,7 +20,6 @@ classifiers = [
     'Programming Language :: Python',
     'Programming Language :: Python :: 3 :: Only',
     'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 3.9',
     'Programming Language :: Python :: 3.10',
     'Programming Language :: Python :: 3.11',
     'Programming Language :: Python :: 3.12',

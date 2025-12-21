@@ -19,7 +19,7 @@ utility will perform the following:
 
 ## Requirements
 
-* [Python][python] 3.9+
+* [Python][python] 3.10+
 * [PyYAML][pyyaml]
 * [Requests][requests] 2.30.0+
 
