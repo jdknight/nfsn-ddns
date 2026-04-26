@@ -1,4 +1,4 @@
-# Development
+# 1.0.0 (2026-04-26)
 
 - Introduce a health-check for the Docker container
 - New exit code for API authentication failures
