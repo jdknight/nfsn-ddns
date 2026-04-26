@@ -116,7 +116,7 @@ to updated multiple records for a single domain).
 <tr><td>Cache</td><td>
 
 Configure whether a detected public IP will be cached into a local file.
-his feature can be used to avoid NFSN API calls if it is believed the
+This feature can be used to avoid NFSN API calls if it is believed the
 public IP of a host is believed to have not changed. After a successful
 verification of a configured DNS record, the detected public IP can be
 stored in a cache file for future considerations. Next time this utility
@@ -320,7 +320,7 @@ docker run --name nfsn-ddns --detach --restart unless-stopped \
 Users who wish to manage their own image can do so with the Docker
 definitions found inside this repository. This can be done by cloning
 this repository on the host wanting to run the container. A Docker
-build can be run on the
+build can be run using:
 
 ```
 docker build -t ghcr.io/jdknight/nfsn-ddns --detach -f docker/Dockerfile .

@@ -49,7 +49,7 @@ the following:
 
 After configuration, perform the following to test/verify the setup:
 
-- Check the application's logs by ensure that there are no errors reported
+- Check the application's logs by ensuring that there are no errors reported
   and an IP was sent to NearlyFreeSpeech.net.
 - Check the application's shell by invoking the following command:
 
