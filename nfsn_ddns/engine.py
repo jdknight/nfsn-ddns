@@ -65,7 +65,7 @@ def engine(args: Namespace) -> int:
     # prepare configuration
     cfg = Config()
 
-    cfg_file = args.cfg if args.cfg else DEFAULT_CFG_FILE
+    cfg_file = args.cfg or DEFAULT_CFG_FILE
     if not cfg.load(cfg_file, expected=args.cfg):
         return EngineState.BAD_CONFIG
 
@@ -119,7 +119,7 @@ def engine(args: Namespace) -> int:
         timeout = MAX_TIMEOUT
 
     token_value = '(set)' if api_token else '(noset)'
-    cache_file_value = cache_file if cache_file else '(default)'
+    cache_file_value = cache_file or '(default)'
     verbose(f'(config) api-endpoint: {api_endpoint}')
     verbose(f'(config) api-login: {api_login}')
     verbose(f'(config) api-token: {token_value}')
