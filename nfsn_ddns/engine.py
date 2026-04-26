@@ -136,6 +136,13 @@ def engine(args: Namespace) -> int:
         err('both ipv4 and ipv6 querying is disabled by configuration')
         return EngineState.BAD_CONFIG
 
+    # acquire the current timestamp for cache checks (and debug prints)
+    datetime_now = datetime.now(tz=timezone.utc)
+
+    # verbose print timestamp for logs which may not have dates
+    debug_timestamp = datetime_now.strftime('%Y-%m-%d %H:%M:%S %Z')
+    verbose(f'timestamp: {debug_timestamp}')
+
     # load any previously cached ip
     cached_data = {}
     if allow_caching:
@@ -154,7 +161,7 @@ def engine(args: Namespace) -> int:
                 verbose(f'checking if cache file is stale: {found_cache_file}')
                 mtime = found_cache_file.stat().st_mtime
                 modified_dt = datetime.fromtimestamp(mtime, tz=timezone.utc)
-                duration = datetime.now(tz=timezone.utc) - modified_dt
+                duration = datetime_now - modified_dt
                 stale = duration.days >= cache_days
 
                 if not stale:
