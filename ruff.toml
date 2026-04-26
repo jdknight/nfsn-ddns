@@ -22,7 +22,4 @@ lint.ignore = [
     'S101',
     # ignore flake8-print since we support/expect printing
     'T20',
-    # still supporting pre-python v3.10
-    'UP007',
-    'UP045',
 ]

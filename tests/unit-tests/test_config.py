@@ -10,19 +10,18 @@ import os
 
 if TYPE_CHECKING:
     from typing import TypeVar
-    from typing import Union
 
     T = TypeVar('T', bound='NfsnDdnsTestCase')
 
 
 class MockedArgs(dict):
-    def __getattr__(self, name: str) -> Union[None, str]:
+    def __getattr__(self, name: str) -> None | str:
         if name in self:
             return self[name]
 
         return None
 
-    def __setattr__(self, name: str, value: Union[None, str]) -> None:
+    def __setattr__(self, name: str, value: None | str) -> None:
         self[name] = value
 
 

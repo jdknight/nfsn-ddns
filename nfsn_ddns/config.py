@@ -14,7 +14,6 @@ import yaml
 
 if TYPE_CHECKING:
     from argparse import Namespace
-    from typing import Optional
 
 
 class Config:
@@ -111,7 +110,7 @@ class Config:
         if args.timeout is not None:
             self.config['timeout'] = args.timeout
 
-    def api_login(self) -> Optional[str]:
+    def api_login(self) -> str | None:
         """
         returns the configured api login value
 
@@ -120,7 +119,7 @@ class Config:
         """
         return self._fetch('api-login')
 
-    def api_token(self) -> Optional[str]:
+    def api_token(self) -> str | None:
         """
         returns the configured api token value
 
@@ -129,7 +128,7 @@ class Config:
         """
         return self._fetch('api-token')
 
-    def cache(self) -> Optional[bool]:
+    def cache(self) -> bool | None:
         """
         returns the configured cache state value
 
@@ -145,7 +144,7 @@ class Config:
         except ValueError:
             return None
 
-    def cache_days(self) -> Optional[int]:
+    def cache_days(self) -> int | None:
         """
         returns the configured cache days value
 
@@ -161,7 +160,7 @@ class Config:
         except ValueError:
             return None
 
-    def cache_file(self) -> Optional[Path]:
+    def cache_file(self) -> Path | None:
         """
         returns the configured cache file value
 
@@ -177,7 +176,7 @@ class Config:
         except TypeError:
             return None
 
-    def ddns_domains(self) -> Optional[list[str]]:
+    def ddns_domains(self) -> list[str] | None:
         """
         returns the configured ddns domains value
 
@@ -195,7 +194,7 @@ class Config:
 
         return domains
 
-    def ipv4(self) -> Optional[bool]:
+    def ipv4(self) -> bool | None:
         """
         returns the configured ipv4 state value
 
@@ -211,7 +210,7 @@ class Config:
         except ValueError:
             return None
 
-    def ipv6(self) -> Optional[bool]:
+    def ipv6(self) -> bool | None:
         """
         returns the configured ipv6 state value
 
@@ -227,7 +226,7 @@ class Config:
         except ValueError:
             return None
 
-    def nfsn_api_endpoint(self) -> Optional[str]:
+    def nfsn_api_endpoint(self) -> str | None:
         """
         returns the configured nfsn api endpoint value
 
@@ -236,7 +235,7 @@ class Config:
         """
         return self._fetch('nfsn-api-endpoint')
 
-    def myipv4_api_endpoint_cmd(self) -> Optional[str]:
+    def myipv4_api_endpoint_cmd(self) -> str | None:
         """
         returns the configured myipv4 api endpoint command value
 
@@ -245,7 +244,7 @@ class Config:
         """
         return self._fetch('myipv4-api-endpoint-cmd')
 
-    def myipv4_api_endpoints(self) -> Optional[list[str]]:
+    def myipv4_api_endpoints(self) -> list[str] | None:
         """
         returns the configured myipv4 api endpoints value
 
@@ -267,7 +266,7 @@ class Config:
 
         return endpoints
 
-    def myipv6_api_endpoint_cmd(self) -> Optional[str]:
+    def myipv6_api_endpoint_cmd(self) -> str | None:
         """
         returns the configured myipv6 api endpoint command value
 
@@ -276,7 +275,7 @@ class Config:
         """
         return self._fetch('myipv6-api-endpoint-cmd')
 
-    def myipv6_api_endpoints(self) -> Optional[list[str]]:
+    def myipv6_api_endpoints(self) -> list[str] | None:
         """
         returns the configured myipv6 api endpoints value
 
@@ -294,7 +293,7 @@ class Config:
 
         return endpoints
 
-    def timeout(self) -> Optional[int]:
+    def timeout(self) -> int | None:
         """
         returns the configured timeout value
 
@@ -340,7 +339,7 @@ class Config:
 
         return rv
 
-    def _fetch(self, key: str, *, env: bool = True) -> Optional[str]:
+    def _fetch(self, key: str, *, env: bool = True) -> str | None:
         """
         fetch a specific key from the configuration
 

@@ -8,16 +8,12 @@ from nfsn_ddns.defs import DEFAULT_IP_FETCH_URLS_V6
 from nfsn_ddns.log import err
 from nfsn_ddns.log import warn
 from nfsn_ddns.log import verbose
-from typing import TYPE_CHECKING
 import ipaddress
 import random
 import requests
 
-if TYPE_CHECKING:
-    from typing import Union
 
-
-def fetch_myipv4(endpoints: Union[None, str, list[str]] = None,
+def fetch_myipv4(endpoints: None | str | list[str] = None,
         timeout: int = 3) -> str:
     """
     query for the external ipv4 address for this instance
@@ -35,7 +31,7 @@ def fetch_myipv4(endpoints: Union[None, str, list[str]] = None,
     return _fetch(ipaddress.IPv4Address, endpoints=endpoints, timeout=timeout)
 
 
-def fetch_myipv6(endpoints: Union[None, str, list[str]] = None,
+def fetch_myipv6(endpoints: None | str | list[str] = None,
         timeout: int = 3) -> str:
     """
     query for the external ipv6 address for this instance
@@ -54,7 +50,7 @@ def fetch_myipv6(endpoints: Union[None, str, list[str]] = None,
 
 
 def _fetch(type_: type[ipaddress.IPv4Address | ipaddress.IPv6Address],
-        endpoints: Union[None, str, list[str]] = None,
+        endpoints: None | str | list[str] = None,
         timeout: int = 3) -> str:
     """
     query for the external ip address for this instance

@@ -3,13 +3,9 @@
 
 from __future__ import annotations
 from contextlib import contextmanager
-from typing import TYPE_CHECKING
 import os
 import sys
 import unittest
-
-if TYPE_CHECKING:
-    from typing import Optional
 
 
 class NfsnDdnsTestSuite(unittest.TestSuite):
@@ -52,7 +48,7 @@ class NfsnDdnsTestCase(unittest.TestCase):
        other's state.
     """
 
-    def run(self, result: Optional[unittest.TestResult] = None) -> None:
+    def run(self, result: unittest.TestResult | None = None) -> None:
         """
         run the test
 

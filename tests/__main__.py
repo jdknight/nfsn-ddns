@@ -6,15 +6,11 @@ from nfsn_ddns.log import nfsn_ddns_log_configuration
 from nfsn_ddns.win32 import enable_ansi_win32
 from pathlib import Path
 from tests import NfsnDdnsTestSuite
-from typing import TYPE_CHECKING
 import argparse
 import fnmatch
 import os
 import sys
 import unittest
-
-if TYPE_CHECKING:
-    from typing import Union
 
 
 # default verbosity for unit tests
@@ -101,7 +97,7 @@ def main() -> int:
         verbosity=DEFAULT_VERBOSITY)
     return 0 if runner.run(suite).wasSuccessful() else 1
 
-def find_tests(entity: Union[unittest.case.TestCase, unittest.TestSuite],
+def find_tests(entity: unittest.case.TestCase | unittest.TestSuite,
         pattern: str) -> tuple[list[unittest.case.TestCase], bool]:
     """
     search for a unit tests with a matching wildcard pattern
