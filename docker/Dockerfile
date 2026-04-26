@@ -42,6 +42,10 @@ RUN pip install /*.whl && rm /*.whl && nfsn-ddns --version
 # configure entrypoint and default command
 COPY --chmod=744 docker/docker-cmd.sh /run/docker-cmd.sh
 COPY --chmod=744 docker/docker-entrypoint.sh /run/docker-entrypoint.sh
+COPY --chmod=744 docker/nfsn-ddns-job.sh /run/nfsn-ddns-job.sh
 
 ENTRYPOINT [ "/run/docker-entrypoint.sh" ]
 CMD [ "/run/docker-cmd.sh" ]
+
+HEALTHCHECK --interval=60s --timeout=3s --retries=1 \
+    CMD [ ! -f /run/nfsn-ddns/unhealthy ] || exit 1

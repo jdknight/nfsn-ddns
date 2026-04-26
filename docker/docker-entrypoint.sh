@@ -10,8 +10,7 @@ fi
 echo "configuring nfsn-ddns schedule in cron: $NFSN_DDNS_SCHEDULE"
 
 echo "SHELL=/bin/bash" | crontab -
-venv="source /opt/venv/bin/activate"
-cmd="$venv && nfsn-ddns --cache --quiet $NFSN_DDNS_EXTRA_ARGS"
+cmd="/run/nfsn-ddns-job.sh $NFSN_DDNS_EXTRA_ARGS"
 cron_entry="$NFSN_DDNS_SCHEDULE $cmd >/proc/1/fd/1 2>&1"
 echo "$cron_entry" | crontab -
 
