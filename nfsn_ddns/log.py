@@ -2,11 +2,6 @@
 # Copyright nfsn-ddns Contributors
 
 from __future__ import annotations
-from typing import TYPE_CHECKING
-import sys
-
-if TYPE_CHECKING:
-    from typing import TextIO
 
 
 # flag to track the disablement of colorized messages
@@ -31,7 +26,7 @@ def log(msg: str, *args: str) -> None:
         *args: an arbitrary set of positional and keyword arguments used when
             generating a formatted message
     """
-    __log('', '', msg, sys.stdout, *args)
+    __log('', '', msg, *args)
 
 
 def err(msg: str, *args: str) -> None:
@@ -50,9 +45,7 @@ def err(msg: str, *args: str) -> None:
         *args: an arbitrary set of positional and keyword arguments used when
             generating a formatted message
     """
-    sys.stdout.flush()
-    __log('(error) ', '\033[1;31m', msg, sys.stderr, *args)
-    sys.stderr.flush()
+    __log('(error) ', '\033[1;31m', msg, *args)
 
 
 def success(msg: str, *args: str) -> None:
@@ -71,7 +64,7 @@ def success(msg: str, *args: str) -> None:
         *args: an arbitrary set of positional and keyword arguments used when
             generating a formatted message
     """
-    __log('(success) ', '\033[1;32m', msg, sys.stdout, *args)
+    __log('(success) ', '\033[1;32m', msg, *args)
 
 
 def verbose(msg: str, *args: str) -> None:
@@ -92,7 +85,7 @@ def verbose(msg: str, *args: str) -> None:
             generating a formatted message
     """
     if NFSN_DDNS_LOG_VERBOSE_FLAG:
-        __log('(verbose) ', '\033[2m', msg, sys.stdout, *args)
+        __log('(verbose) ', '\033[2m', msg, *args)
 
 
 def warn(msg: str, *args: str) -> None:
@@ -111,12 +104,9 @@ def warn(msg: str, *args: str) -> None:
         *args: an arbitrary set of positional and keyword arguments used when
             generating a formatted message
     """
-    sys.stdout.flush()
-    __log('(warn) ', '\033[1;35m', msg, sys.stderr, *args)
-    sys.stderr.flush()
+    __log('(warn) ', '\033[1;35m', msg, *args)
 
-
-def __log(prefix: str, color: str, msg: str, file: TextIO, *args: str) -> None:
+def __log(prefix: str, color: str, msg: str, *args: str) -> None:
     """
     utility logging method
 
@@ -126,7 +116,6 @@ def __log(prefix: str, color: str, msg: str, file: TextIO, *args: str) -> None:
         prefix: prefix to add to the message
         color: the color to apply to the message
         msg: the message
-        file: the file to write to
         *args: an arbitrary set of positional and keyword arguments used when
             generating a formatted message
     """
@@ -138,7 +127,7 @@ def __log(prefix: str, color: str, msg: str, file: TextIO, *args: str) -> None:
     msg = str(msg)
     if args:
         msg = msg.format(*args)
-    print(f'{color}{prefix}{msg}{post}', file=file)
+    print(f'{color}{prefix}{msg}{post}', flush=True)
 
 
 def nfsn_ddns_log_configuration(*, nocolor: bool, verbose_: bool) -> None:
