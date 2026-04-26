@@ -2,7 +2,7 @@
 # Copyright nfsn-ddns Contributors
 
 # type of image to build
-# - local: builds using a local nfsn-ddns, already prepated (python -m build)
+# - local: builds using a local nfsn-ddns, already prepared (python -m build)
 # - external: builds using pypi's available version of nfsn-ddns
 ARG BUILD_MODE=external
 
