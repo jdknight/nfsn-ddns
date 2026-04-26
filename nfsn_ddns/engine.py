@@ -49,6 +49,8 @@ class EngineState(IntEnum):
     NFSN_API_FAILURE_INIT = 3
     # failure to talk with nfsn api (n+1 calls)
     NFSN_API_FAILURE = 4
+    # failure to talk with nfsn api due to an authentication error
+    NFSN_API_FAILURE_AUTH = 5
 
 
 def engine(args: Namespace) -> int:
@@ -248,7 +250,11 @@ def engine(args: Namespace) -> int:
             rsp.raise_for_status()
         except HTTPError as e:
             err(f'failed to query the dns record\n{e}')
-            return EngineState.NFSN_API_FAILURE_INIT
+            match e.response.status_code:
+                case 401:
+                    return EngineState.NFSN_API_FAILURE_AUTH
+                case _:
+                    return EngineState.NFSN_API_FAILURE_INIT
 
         if args.action == Action.CHECK:
             success('verified connection with nfsn')
@@ -313,7 +319,11 @@ def engine(args: Namespace) -> int:
                 rsp.raise_for_status()
         except HTTPError as e:
             err(f'failed to query the dns record\n{e}')
-            return EngineState.NFSN_API_FAILURE
+            match e.response.status_code:
+                case 401:
+                    return EngineState.NFSN_API_FAILURE_AUTH
+                case _:
+                    return EngineState.NFSN_API_FAILURE_INIT
 
     # save the newly detected ip if it has changed
     if allow_caching and (not ipv4_cache_hit or not ipv6_cache_hit):
