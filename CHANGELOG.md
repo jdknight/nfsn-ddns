@@ -1,3 +1,8 @@
+# Development
+
+- Introduce a health-check for the Docker container
+- New exit code for API authentication failures
+
 # 0.3.0 (2024-11-02)
 
 - Ensure parsed IP's version type matches target DNS record type
